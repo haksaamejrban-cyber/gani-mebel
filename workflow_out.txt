@@ -1,0 +1,315 @@
+
+=== Send TXT (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{ $('Global Config').item.json.host_prefix }}.api.greenapi.com/waInstance{{ $('Global Config').item.json.instance_id }}/sendMessage/{{ $('Global Config').item.json.api_token }}",
+  "sendBody": true,
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "name": "message",
+        "value": "={{ $json.output }}"
+      }
+    ]
+  },
+  "options": {}
+}
+
+=== Recording Voice (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{ $('Global Config').item.json.host_prefix }}.api.greenapi.com/waInstance{{ $('Global Config').item.json.instance_id }}/sendTyping/{{ $('Global Config').item.json.api_token }}",
+  "sendBody": true,
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "name": "typingType",
+        "value": "recording"
+      },
+      {
+        "name": "typingTime",
+        "value": "5000"
+      }
+    ]
+  },
+  "options": {
+    "response": {
+      "response": {
+        "responseFormat": "text"
+      }
+    }
+  }
+}
+
+=== Send Voice Link (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{ $('Global Config').item.json.host_prefix }}.api.greenapi.com/waInstance{{ $('Global Config').item.json.instance_id }}/sendFileByUpload/{{ $('Global Config').item.json.api_token }}",
+  "sendBody": true,
+  "contentType": "multipart-form-data",
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "parameterType": "formBinaryData",
+        "name": "file",
+        "inputDataFieldName": "data"
+      },
+      {
+        "name": "fileName",
+        "value": "answer.ogg"
+      }
+    ]
+  },
+  "options": {
+    "response": {
+      "response": {
+        "fullResponse": true
+      }
+    },
+    "timeout": 60000
+  }
+}
+
+=== Download Audio (n8n-nodes-base.httpRequest) ===
+{
+  "url": "={{ $('WebnookGani').item.json.body.messageData.fileMessageData.downloadUrl }}",
+  "options": {
+    "response": {
+      "response": {
+        "responseFormat": "file"
+      }
+    }
+  }
+}
+
+=== HTTP Request (Image) (n8n-nodes-base.httpRequest) ===
+{
+  "url": "={{ $('WebnookGani').item.json.body.messageData.fileMessageData.downloadUrl }}",
+  "options": {
+    "response": {
+      "response": {
+        "responseFormat": "file"
+      }
+    }
+  }
+}
+
+=== Replicate_Start_NanoBanana (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "https://api.replicate.com/v1/models/google/nano-banana-pro/predictions",
+  "sendHeaders": true,
+  "headerParameters": {
+    "parameters": [
+      {
+        "name": "Authorization",
+        "value": "Bearer ${REPLICATE_API_TOKEN}"
+      },
+      {
+        "name": "Content-Type",
+        "value": "application/json"
+      },
+      {
+        "name": "Prefer",
+        "value": "wait=60"
+      }
+    ]
+  },
+  "sendBody": true,
+  "specifyBody": "json",
+  "jsonBody": "={\n  \"input\": {\n    \"prompt\": \"Process the image in real time. Remove all objects from the front wall only (clothes, table, chair, old furniture, boxes, cabinet, vacuum cleaner, etc.), leaving the objects on the left and right walls completely untouched. The ceiling and floor should remain untouched. You can only move objects that interfere with the kitchen design. {{ $json.prompt }}\",\n  \"resolution\": \"2K\",\n  \"image_input\": [\n    \"{{ $json.image }}\"\n  ]\n  }\n}",
+  "options": {}
+}
+
+=== Check_Status (n8n-nodes-base.httpRequest) ===
+{
+  "url": "=https://api.replicate.com/v1/predictions/{{ $('Replicate_Start_NanoBanana').item.json.id }}",
+  "sendHeaders": true,
+  "headerParameters": {
+    "parameters": [
+      {
+        "name": "Authorization",
+        "value": "Bearer ${REPLICATE_API_TOKEN}"
+      }
+    ]
+  },
+  "options": {}
+}
+
+=== Sending_result (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{ $('Global Config').item.json.host_prefix }}.api.greenapi.com/waInstance{{ $('Global Config').item.json.instance_id }}/SendFileByUrl/{{ $('Global Config').item.json.api_token }}",
+  "sendBody": true,
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "name": "urlFile",
+        "value": "={{ $json.output }}"
+      },
+      {
+        "name": "fileName",
+        "value": "project_mj_mebel.jpg"
+      },
+      {
+        "name": "caption",
+        "value": "={{ \"Ваша будущая кухня — просто загляденье! ✨\\nПроект уже готов, и теперь самое время переходить к деталям. Я готов отправить к вам мастера-технолога для точного замера.\\nОн привезет каталог материалов, чтобы вы могли всё потрогать и выбрать лучшее решение.\\nЖду ваш адрес и удобное время для визита!\" }}"
+      }
+    ]
+  },
+  "options": {}
+}
+
+=== Send_Wall_Ref_Photo (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{ $('Global Config').item.json.host_prefix }}.api.greenapi.com/waInstance{{ $('Global Config').item.json.instance_id }}/sendMessage/{{ $('Global Config').item.json.api_token }}",
+  "sendBody": true,
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "name": "message",
+        "value": "={{ $json.output }}"
+      }
+    ]
+  },
+  "options": {}
+}
+
+=== Send Error (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{ $('Global Config').item.json.host_prefix }}.api.greenapi.com/waInstance{{ $('Global Config').item.json.instance_id }}/sendMessage/{{ $('Global Config').item.json.api_token }}",
+  "sendBody": true,
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "name": "message",
+        "value": "Техническая ошибка, прошу Вас подождать минуту, мы Вам обязательно отправим фото вашей кухни-мечты."
+      }
+    ]
+  },
+  "options": {}
+}
+
+=== HTTP Result (n8n-nodes-base.httpRequest) ===
+{
+  "url": "={{ $('If2').item.json.output }}",
+  "options": {
+    "response": {
+      "response": {
+        "responseFormat": "file"
+      }
+    }
+  }
+}
+
+=== Typing2 (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{$node[\"Global Config\"].json.host_prefix}}.api.greenapi.com/waInstance{{$node[\"Global Config\"].json.instance_id}}/SendTyping/{{$node[\"Global Config\"].json.api_token}}",
+  "sendBody": true,
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "name": "typingTime",
+        "value": "5000"
+      }
+    ]
+  },
+  "options": {
+    "response": {
+      "response": {
+        "responseFormat": "text"
+      }
+    }
+  }
+}
+
+=== Stop Typing (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "http://ganimebel.kz:5000/api/stop-typing",
+  "sendBody": true,
+  "specifyBody": "json",
+  "jsonBody": "={\n  \"session_id\": \"{{ $('Start Typing').item.json.session_id }}\"\n}",
+  "options": {}
+}
+
+=== Start Typing (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "http://ganimebel.kz:5000/api/start-typing",
+  "sendBody": true,
+  "specifyBody": "json",
+  "jsonBody": "= {                                                                                         \n    \"chatId\": \"{{ $('WebnookGani').item.json.body.senderData.chatId }}\",\n    \"instanceId\": \"{{ $json.instance_id }}\",\n    \"apiToken\": \"{{ $json.api_token }}\",\n    \"hostPrefix\": \"{{ $json.host_prefix }}\"\n  }",
+  "options": {}
+}
+
+=== SendReadyPhoto (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{ $('Global Config').item.json.host_prefix }}.api.greenapi.com/waInstance{{ $('Global Config').item.json.instance_id }}/sendMessage/{{ $('Global Config').item.json.api_token }}",
+  "sendBody": true,
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "name": "message",
+        "value": "Прошу Вас подождать минуту, мы приготовим фото вашей кухни-мечты."
+      }
+    ]
+  },
+  "options": {}
+}
+
+=== Send Error1 (n8n-nodes-base.httpRequest) ===
+{
+  "method": "POST",
+  "url": "=https://{{ $('Global Config').item.json.host_prefix }}.api.greenapi.com/waInstance{{ $('Global Config').item.json.instance_id }}/sendMessage/{{ $('Global Config').item.json.api_token }}",
+  "sendBody": true,
+  "bodyParameters": {
+    "parameters": [
+      {
+        "name": "chatId",
+        "value": "={{ $('WebnookGani').item.json.body.senderData.chatId }}"
+      },
+      {
+        "name": "message",
+        "value": "Этот проект удачно закрыть. Удачи в осуществлении проекта!"
+      }
+    ]
+  },
+  "options": {}
+}

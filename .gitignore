@@ -17,10 +17,15 @@ __pycache__/
 *.pyo
 
 # Временные файлы
-*.txt
-*.json
-!form/requirements.txt
-!form/submissions.json
+api_log.txt
+log_out.txt
+log2_out.txt
+exec_out.txt
+exec2_out.txt
+exec_detail.txt
+config_out.txt
+form/api.log
+form/bot.log
 
 # IDE
 .vscode/
