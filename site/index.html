@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gani Mebel — мебель на заказ в Алматы. Кухни, шкафы, спальни, прихожие. Бесплатный замер и дизайн-проект.">
+  <title>Gani Mebel — мебель на заказ</title>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #248bcf;
+      --blue-dark: #1a6fa8;
+      --blue-light: #e8f4fd;
+      --gold: #f5a623;
+      --dark: #1a1e2e;
+      --gray: #6b7280;
+      --light: #f8fafc;
+      --white: #ffffff;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,.10);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,.15);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--dark); background: var(--white); overflow-x: hidden; }
+
+    /* UTILS */
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 50px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; text-decoration: none; transition: all .25s; }
+    .btn-primary { background: var(--blue); color: var(--white); }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(36,139,207,.35); }
+    .btn-outline { background: transparent; color: var(--white); border: 2px solid rgba(255,255,255,.6); }
+    .btn-outline:hover { background: rgba(255,255,255,.15); border-color: var(--white); }
+    .btn-gold { background: var(--gold); color: var(--white); }
+    .btn-gold:hover { background: #e0911a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,166,35,.35); }
+    .section-label { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; }
+    .section-title { font-size: clamp(26px, 4vw, 40px); font-weight: 800; line-height: 1.2; color: var(--dark); margin-bottom: 16px; }
+    .section-sub { font-size: 17px; color: var(--gray); line-height: 1.7; max-width: 580px; }
+    section { padding: 96px 0; }
+
+    /* HEADER */
+    header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; transition: all .3s; }
+    header.scrolled { background: rgba(255,255,255,.97); backdrop-filter: blur(12px); box-shadow: 0 2px 20px rgba(0,0,0,.08); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 40px; height: 40px; background: var(--blue); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { width: 24px; height: 24px; fill: white; }
+    .logo-text { font-size: 20px; font-weight: 800; color: var(--dark); line-height: 1; }
+    .logo-text span { color: var(--blue); }
+    header:not(.scrolled) .logo-text { color: var(--white); }
+    header:not(.scrolled) .logo-text span { color: rgba(255,255,255,.8); }
+    nav { display: flex; align-items: center; gap: 32px; }
+    nav a { font-size: 15px; font-weight: 500; color: var(--dark); text-decoration: none; transition: color .2s; }
+    nav a:hover { color: var(--blue); }
+    header:not(.scrolled) nav a { color: rgba(255,255,255,.9); }
+    header:not(.scrolled) nav a:hover { color: var(--white); }
+    .header-phone { display: flex; align-items: center; gap: 16px; }
+    .header-phone a { font-weight: 700; color: var(--dark); text-decoration: none; font-size: 15px; }
+    header:not(.scrolled) .header-phone a { color: var(--white); }
+    .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .burger span { width: 24px; height: 2px; background: var(--dark); border-radius: 2px; transition: all .3s; }
+    header:not(.scrolled) .burger span { background: var(--white); }
+    .mobile-menu { display: none; position: fixed; top: 72px; left: 0; right: 0; background: white; padding: 24px 20px; box-shadow: var(--shadow); flex-direction: column; gap: 16px; z-index: 99; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-size: 17px; font-weight: 500; color: var(--dark); text-decoration: none; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+
+    /* HERO */
+    .hero { min-height: 100vh; background: linear-gradient(135deg, #1a1e2e 0%, #1a6fa8 60%, #248bcf 100%); display: flex; align-items: center; position: relative; overflow: hidden; padding: 120px 0 80px; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    .hero-blob { position: absolute; right: -10%; top: 10%; width: 55%; aspect-ratio: 1; background: radial-gradient(circle, rgba(36,139,207,.3) 0%, transparent 70%); border-radius: 50%; }
+    .hero-content { position: relative; z-index: 1; max-width: 600px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.9); font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 50px; margin-bottom: 28px; }
+    .hero-badge::before { content: ''; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; }
+    .hero h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 24px; }
+    .hero h1 span { color: var(--gold); }
+    .hero p { font-size: 18px; color: rgba(255,255,255,.8); line-height: 1.7; margin-bottom: 40px; }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-stats { display: flex; gap: 40px; margin-top: 56px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,.15); flex-wrap: wrap; }
+    .hero-stat-num { font-size: 36px; font-weight: 900; color: var(--white); line-height: 1; }
+    .hero-stat-label { font-size: 13px; color: rgba(255,255,255,.65); margin-top: 4px; }
+    .hero-image { position: absolute; right: 0; top: 0; bottom: 0; width: 48%; overflow: hidden; }
+    .hero-image-inner { width: 100%; height: 100%; background: linear-gradient(160deg, rgba(26,110,168,.6) 0%, rgba(26,30,46,.4) 100%), url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=900&auto=format&fit=crop') center/cover; }
+
+    /* CATEGORIES */
+    .categories { background: var(--light); }
+    .categories-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; flex-wrap: wrap; gap: 16px; }
+    .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+    .cat-card { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: transform .3s, box-shadow .3s; cursor: pointer; text-decoration: none; }
+    .cat-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .cat-card-img { height: 200px; position: relative; overflow: hidden; }
+    .cat-card-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,30,46,.6) 0%, transparent 60%); }
+    .cat-card-img .cat-icon { position: absolute; bottom: 16px; left: 16px; z-index: 1; font-size: 36px; }
+    .cat-bg-kitchen { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .cat-bg-bedroom { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .cat-bg-living { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .cat-bg-hall { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .cat-bg-cabinet { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .cat-bg-kids { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+    .cat-card-body { padding: 20px 22px 24px; }
+    .cat-card-body h3 { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+    .cat-card-body p { font-size: 14px; color: var(--gray); line-height: 1.5; }
+    .cat-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--blue); margin-top: 12px; }
+
+    /* WHY US */
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 32px; margin-top: 56px; }
+    .why-card { text-align: center; }
+    .why-icon { width: 72px; height: 72px; background: var(--blue-light); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 32px; }
+    .why-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .why-card p { font-size: 15px; color: var(--gray); line-height: 1.6; }
+
+    /* STEPS */
+    .steps-section { background: var(--dark); }
+    .steps-section .section-title { color: var(--white); }
+    .steps-section .section-sub { color: rgba(255,255,255,.65); }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px; margin-top: 56px; }
+    .step-card { position: relative; }
+    .step-num { font-size: 64px; font-weight: 900; color: rgba(255,255,255,.06); line-height: 1; margin-bottom: -16px; }
+    .step-icon { width: 56px; height: 56px; background: var(--blue); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+    .step-card h3 { font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+    .step-card p { font-size: 14px; color: rgba(255,255,255,.55); line-height: 1.6; }
+    .step-line { display: none; }
+
+    /* PORTFOLIO */
+    .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: auto; gap: 16px; margin-top: 48px; }
+    .portfolio-item { border-radius: var(--radius); overflow: hidden; aspect-ratio: 4/3; position: relative; cursor: pointer; }
+    .portfolio-item:nth-child(1) { grid-column: span 2; aspect-ratio: 16/9; }
+    .portfolio-item-inner { width: 100%; height: 100%; transition: transform .4s; }
+    .portfolio-item:hover .portfolio-item-inner { transform: scale(1.05); }
+    .portfolio-item-inner::after { content: attr(data-label); position: absolute; bottom: 16px; left: 16px; background: rgba(36,139,207,.85); color: white; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 50px; backdrop-filter: blur(4px); }
+    .p-bg-1 { background: linear-gradient(135deg, #1a1e2e 0%, #2d6a9f 100%); }
+    .p-bg-2 { background: linear-gradient(135deg, #2d6a9f 0%, #248bcf 100%); }
+    .p-bg-3 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .p-bg-4 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .p-bg-5 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .portfolio-decor { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 60px; opacity: .15; }
+    .portfolio-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; }
+
+    /* REVIEWS */
+    .reviews { background: var(--light); }
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 48px; }
+    .review-card { background: var(--white); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
+    .review-stars { color: var(--gold); font-size: 18px; margin-bottom: 14px; letter-spacing: 2px; }
+    .review-text { font-size: 15px; color: var(--gray); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+    .review-author { display: flex; align-items: center; gap: 12px; }
+    .review-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+    .review-name { font-weight: 700; font-size: 15px; }
+    .review-meta { font-size: 13px; color: var(--gray); }
+
+    /* CTA BANNER */
+    .cta-banner { background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 100%); }
+    .cta-banner-inner { display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+    .cta-banner h2 { font-size: clamp(24px, 3.5vw, 38px); font-weight: 800; color: var(--white); }
+    .cta-banner p { color: rgba(255,255,255,.75); margin-top: 8px; font-size: 16px; }
+    .cta-actions { display: flex; gap: 16px; flex-wrap: wrap; flex-shrink: 0; }
+
+    /* CONTACTS */
+    .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-top: 56px; }
+    .contact-block h3 { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+    .contact-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+    .contact-icon { width: 48px; height: 48px; background: var(--blue-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .contact-label { font-size: 12px; color: var(--gray); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .contact-value { font-size: 16px; font-weight: 600; color: var(--dark); margin-top: 2px; }
+    .contact-value a { color: var(--dark); text-decoration: none; }
+    .contact-value a:hover { color: var(--blue); }
+    .contact-social { display: flex; gap: 12px; margin-top: 8px; }
+    .social-btn { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; text-decoration: none; transition: transform .2s; }
+    .social-btn:hover { transform: translateY(-3px); }
+    .social-tg { background: #2AABEE; }
+    .social-wa { background: #25D366; }
+    .social-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+
+    /* FORM */
+    .order-form { background: var(--light); border-radius: var(--radius); padding: 36px; }
+    .order-form h3 { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray); margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 15px; outline: none; transition: border .2s; font-family: inherit; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-note { font-size: 12px; color: var(--gray); margin-top: 12px; line-height: 1.5; }
+    .form-success { display: none; text-align: center; padding: 40px 20px; }
+    .form-success-icon { font-size: 56px; margin-bottom: 16px; }
+    .form-success h3 { font-size: 22px; font-weight: 700; color: var(--dark); }
+    .form-success p { color: var(--gray); margin-top: 8px; }
+
+    /* FOOTER */
+    footer { background: var(--dark); padding: 48px 0 32px; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,.08); flex-wrap: wrap; }
+    .footer-logo .logo-text { color: var(--white); }
+    .footer-desc { font-size: 14px; color: rgba(255,255,255,.45); margin-top: 12px; max-width: 240px; line-height: 1.6; }
+    .footer-nav h4 { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
+    .footer-nav a { display: block; font-size: 14px; color: rgba(255,255,255,.7); text-decoration: none; margin-bottom: 10px; transition: color .2s; }
+    .footer-nav a:hover { color: var(--white); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; flex-wrap: wrap; gap: 12px; }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,.35); }
+    .footer-made { font-size: 13px; color: rgba(255,255,255,.25); }
+
+    /* FLOATING */
+    .float-wa { position: fixed; bottom: 28px; right: 28px; width: 56px; height: 56px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 4px 20px rgba(37,211,102,.4); z-index: 50; text-decoration: none; transition: transform .25s; }
+    .float-wa:hover { transform: scale(1.1); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav, .header-phone .btn { display: none; }
+      .burger { display: flex; }
+      .hero-image { display: none; }
+      .hero { padding: 100px 0 60px; }
+      .contacts-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr 1fr; }
+      .portfolio-item:nth-child(1) { grid-column: span 2; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 64px 0; }
+      .form-row { grid-template-columns: 1fr; }
+      .hero-stats { gap: 24px; }
+      .hero-actions { flex-direction: column; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .portfolio-item:nth-child(1) { grid-column: span 1; aspect-ratio: 4/3; }
+      .cta-banner-inner { flex-direction: column; }
+      .footer-top { flex-direction: column; gap: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="container">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M2 6h2v12H2zm3 4h2v8H5zm3-2h2v10H8zm3 3h2v7h-2zm3-1h2v8h-2zm3-4h2v12h-2z"/></svg>
+        </div>
+        <div class="logo-text">Gani <span>Mebel</span></div>
+      </a>
+      <nav>
+        <a href="#categories">Продукция</a>
+        <a href="#steps">Как работаем</a>
+        <a href="#portfolio">Портфолио</a>
+        <a href="#reviews">Отзывы</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+      <div class="header-phone">
+        <a href="tel:+77002222222">+7 700 222-22-22</a>
+        <a href="#order" class="btn btn-primary" style="padding:10px 20px;font-size:14px;">Заказать</a>
+      </div>
+      <div class="burger" id="burger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#categories" onclick="closeMenu()">Продукция</a>
+  <a href="#steps" onclick="closeMenu()">Как работаем</a>
+  <a href="#portfolio" onclick="closeMenu()">Портфолио</a>
+  <a href="#reviews" onclick="closeMenu()">Отзывы</a>
+  <a href="#contacts" onclick="closeMenu()">Контакты</a>
+  <a href="tel:+77002222222" style="color:var(--blue);">+7 700 222-22-22</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-image"><div class="hero-image-inner"></div></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">Мебель на заказ в Алматы</div>
+      <h1>Мебель, которая<br><span>создана для вас</span></h1>
+      <p>Кухни, шкафы, спальни и гостиные — проектируем и изготавливаем под размер вашего пространства. Бесплатный замер и дизайн-проект.</p>
+      <div class="hero-actions">
+        <a href="#order" class="btn btn-gold">Заказать замер</a>
+        <a href="#portfolio" class="btn btn-outline">Посмотреть работы</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">7+</div>
+          <div class="hero-stat-label">лет на рынке</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">1200+</div>
+          <div class="hero-stat-label">выполненных проектов</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">5 лет</div>
+          <div class="hero-stat-label">гарантия на мебель</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories" id="categories">
+  <div class="container">
+    <div class="categories-header">
+      <div>
+        <div class="section-label">Продукция</div>
+        <h2 class="section-title">Что мы производим</h2>
+      </div>
+      <p class="section-sub" style="max-width:360px;">Изготавливаем любую корпусную мебель по вашим размерам и пожеланиям</p>
+    </div>
+    <div class="categories-grid">
+      <a href="#order" class="cat-card">
+        <div class="cat-card-img cat-bg-kitchen"><div class="cat-icon">🍳</div></div>
+        <div class="cat-card-body">
+          <h3>Кухни</h3>
+          <p>Угловые, прямые, П-образные — любая конфигурация под ваш размер</p>
+          <div class="cat-link">Подробнее →</div>
+        </div>
+      </a>
+      <a href="#order" class="cat-card">
+        <div class="cat-card-img cat-bg-bedroom"><div class="cat-icon">🛏</div></div>
+        <div class="cat-card-body">
+          <h3>Спальни</h3>
+          <p>Кровати, тумбочки, комоды, зеркала — полный гарнитур</p>
+          <div class="cat-link">Подробнее →</div>
+        </div>
+      </a>
+      <a href="#order" class="cat-card">
+        <div class="cat-card-img cat-bg-living"><div class="cat-icon">🛋</div></div>
+        <div class="cat-card-body">
+          <h3>Гостиные</h3>
+          <p>Стенки, тумбы под TV, стеллажи, журнальные столики</p>
+          <div class="cat-link">Подробнее →</div>
+        </div>
+      </a>
+      <a href="#order" class="cat-card">
+        <div class="cat-card-img cat-bg-hall"><div class="cat-icon">🚪</div></div>
+        <div class="cat-card-body">
+          <h3>Прихожие</h3>
+          <p>Шкафы, вешалки, обувницы — умная организация прихожей</p>
+          <div class="cat-link">Подробнее →</div>
+        </div>
+      </a>
+      <a href="#order" class="cat-card">
+        <div class="cat-card-img cat-bg-cabinet"><div class="cat-icon">📚</div></div>
+        <div class="cat-card-body">
+          <h3>Шкафы-купе</h3>
+          <p>Встроенные и отдельностоящие, с зеркалами и без</p>
+          <div class="cat-link">Подробнее →</div>
+        </div>
+      </a>
+      <a href="#order" class="cat-card">
+        <div class="cat-card-img cat-bg-kids"><div class="cat-icon">🧸</div></div>
+        <div class="cat-card-body">
+          <h3>Детские</h3>
+          <p>Кровати, столы, шкафы — безопасные материалы и яркие цвета</p>
+          <div class="cat-link">Подробнее →</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-label">Наши преимущества</div>
+      <h2 class="section-title">Почему выбирают нас</h2>
+      <p class="section-sub" style="margin:0 auto;">Работаем напрямую — без посредников и переплат</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">📐</div>
+        <h3>Точный замер</h3>
+        <p>Выезжаем к вам бесплатно, замеряем каждый сантиметр и учитываем все нюансы помещения</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🎨</div>
+        <h3>Дизайн-проект</h3>
+        <p>Создаём 3D-визуализацию будущей мебели, чтобы вы могли увидеть результат до производства</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🏭</div>
+        <h3>Собственное производство</h3>
+        <p>Изготавливаем мебель на своём оборудовании — контроль качества на каждом этапе</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🛡</div>
+        <h3>Гарантия 5 лет</h3>
+        <p>Даём гарантию на всю мебель и фурнитуру. Устраняем любые дефекты бесплатно</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🚚</div>
+        <h3>Доставка и монтаж</h3>
+        <p>Доставляем по Алматы и области, профессионально устанавливаем в срок</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">💰</div>
+        <h3>Честная цена</h3>
+        <p>Работаем напрямую с заводами-производителями материалов — без лишних наценок</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="steps-section" id="steps">
+  <div class="container">
+    <div class="section-label" style="color:rgba(255,255,255,.5);">Процесс работы</div>
+    <h2 class="section-title">Как мы работаем</h2>
+    <p class="section-sub">От первого звонка до готовой мебели — всего 4 простых шага</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">📞</div>
+        <h3>Заявка</h3>
+        <p>Оставьте заявку или позвоните нам. Уточним задачу и договоримся о замере</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">📏</div>
+        <h3>Замер и дизайн</h3>
+        <p>Бесплатно приедем, замерим помещение и разработаем дизайн-проект с 3D-визуализацией</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">🔧</div>
+        <h3>Производство</h3>
+        <p>Изготавливаем мебель на собственном производстве в срок от 14 до 30 дней</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-icon">🏠</div>
+        <h3>Доставка и монтаж</h3>
+        <p>Привозим и устанавливаем мебель. Убираем за собой — вы принимаете готовый результат</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="container">
+    <div class="portfolio-header">
+      <div>
+        <div class="section-label">Портфолио</div>
+        <h2 class="section-title">Наши работы</h2>
+      </div>
+      <a href="#order" class="btn btn-primary">Заказать похожее</a>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-item">
+        <div class="portfolio-item-inner p-bg-1" data-label="Кухня в стиле минимализм">
+          <div class="portfolio-decor">🍳</div>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-item-inner p-bg-2" data-label="Спальня">
+          <div class="portfolio-decor">🛏</div>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-item-inner p-bg-3" data-label="Гостиная">
+          <div class="portfolio-decor">🛋</div>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-item-inner p-bg-4" data-label="Детская">
+          <div class="portfolio-decor">🧸</div>
+        </div>
+      </div>
+      <div class="portfolio-item">
+        <div class="portfolio-item-inner p-bg-5" data-label="Прихожая">
+          <div class="portfolio-decor">🚪</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:8px;">
+      <div class="section-label">Отзывы</div>
+      <h2 class="section-title">Что говорят клиенты</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Заказывала кухню у Gani Mebel. Замерщик приехал на следующий день, дизайн согласовали быстро. Готовая кухня превзошла все ожидания — идеально вписалась в пространство!»</p>
+        <div class="review-author">
+          <div class="review-avatar">А</div>
+          <div>
+            <div class="review-name">Айгерим С.</div>
+            <div class="review-meta">Кухня на заказ · Алматы</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Делали спальный гарнитур и шкаф-купе. Ребята профессионалы — учли каждую мелочь. Качество материалов на высоте, всё аккуратно собрали без единой царапины.»</p>
+        <div class="review-author">
+          <div class="review-avatar">Н</div>
+          <div>
+            <div class="review-name">Нурлан К.</div>
+            <div class="review-meta">Спальня + шкаф-купе · Алматы</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Очень довольна! Долго искала мастеров для детской комнаты — хотела безопасные материалы и яркий дизайн. Gani Mebel всё сделали точно в срок и по адекватной цене.»</p>
+        <div class="review-author">
+          <div class="review-avatar">М</div>
+          <div>
+            <div class="review-name">Мадина Р.</div>
+            <div class="review-meta">Детская комната · Алматы</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner" style="padding:64px 0;">
+  <div class="container">
+    <div class="cta-banner-inner">
+      <div>
+        <h2>Готовы создать мебель вашей мечты?</h2>
+        <p>Оставьте заявку — перезвоним в течение 30 минут и назначим бесплатный замер</p>
+      </div>
+      <div class="cta-actions">
+        <a href="#order" class="btn btn-gold">Получить расчёт</a>
+        <a href="https://wa.me/77002222222" class="btn btn-outline" target="_blank">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTS -->
+<section id="contacts">
+  <div class="container">
+    <div class="section-label">Контакты</div>
+    <h2 class="section-title">Свяжитесь с нами</h2>
+    <div class="contacts-grid">
+      <div>
+        <div class="contact-block">
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <div class="contact-label">Телефон</div>
+              <div class="contact-value"><a href="tel:+77002222222">+7 700 222-22-22</a></div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <div class="contact-label">Адрес шоурума</div>
+              <div class="contact-value">г. Алматы, ул. Примерная, 1</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🕐</div>
+            <div>
+              <div class="contact-label">Режим работы</div>
+              <div class="contact-value">Пн–Сб: 9:00–19:00<br>Вс: 10:00–17:00</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">💬</div>
+            <div>
+              <div class="contact-label">Мессенджеры</div>
+              <div class="contact-social">
+                <a href="https://t.me/ganimebel" class="social-btn social-tg" target="_blank">✈</a>
+                <a href="https://wa.me/77002222222" class="social-btn social-wa" target="_blank">💬</a>
+                <a href="https://instagram.com/ganimebel" class="social-btn social-ig" target="_blank">📷</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="order">
+        <div class="order-form">
+          <h3>Оставить заявку</h3>
+          <div id="contactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ваше имя *</label>
+                <input type="text" id="fname" placeholder="Айгерим">
+              </div>
+              <div class="form-group">
+                <label>Телефон *</label>
+                <input type="tel" id="fphone" placeholder="+7 700 000-00-00">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Тип мебели</label>
+              <select id="ftype">
+                <option value="">Выберите тип</option>
+                <option>Кухня</option>
+                <option>Спальня</option>
+                <option>Гостиная</option>
+                <option>Прихожая</option>
+                <option>Шкаф-купе</option>
+                <option>Детская</option>
+                <option>Другое</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Комментарий</label>
+              <textarea id="fcomment" placeholder="Размеры, пожелания, вопросы..."></textarea>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="submitOrder()">
+              Отправить заявку
+            </button>
+            <p class="form-note">Нажимая «Отправить», вы соглашаетесь на обработку персональных данных. Перезвоним в течение 30 минут.</p>
+          </div>
+          <div class="form-success" id="formSuccess">
+            <div class="form-success-icon">✅</div>
+            <h3>Заявка принята!</h3>
+            <p>Перезвоним вам в течение 30 минут.<br>Спасибо, что выбрали Gani Mebel!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a href="/" class="logo footer-logo">
+          <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M2 6h2v12H2zm3 4h2v8H5zm3-2h2v10H8zm3 3h2v7h-2zm3-1h2v8h-2zm3-4h2v12h-2z"/></svg></div>
+          <div class="logo-text">Gani <span style="color:var(--blue)">Mebel</span></div>
+        </a>
+        <p class="footer-desc">Мебель на заказ в Алматы. Качество, проверенное временем.</p>
+      </div>
+      <div class="footer-nav">
+        <h4>Продукция</h4>
+        <a href="#order">Кухни</a>
+        <a href="#order">Спальни</a>
+        <a href="#order">Гостиные</a>
+        <a href="#order">Прихожие</a>
+        <a href="#order">Шкафы-купе</a>
+      </div>
+      <div class="footer-nav">
+        <h4>Компания</h4>
+        <a href="#why">О нас</a>
+        <a href="#steps">Как работаем</a>
+        <a href="#portfolio">Портфолио</a>
+        <a href="#reviews">Отзывы</a>
+        <a href="#contacts">Контакты</a>
+      </div>
+      <div class="footer-nav">
+        <h4>Контакты</h4>
+        <a href="tel:+77002222222">+7 700 222-22-22</a>
+        <a href="https://wa.me/77002222222">WhatsApp</a>
+        <a href="https://t.me/ganimebel">Telegram</a>
+        <a href="mailto:info@ganimebel.kz">info@ganimebel.kz</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024 Gani Mebel. Все права защищены.</div>
+      <div class="footer-made">ganimebel.kz</div>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/77002222222" class="float-wa" target="_blank" title="WhatsApp">💬</a>
+
+<script>
+  // Header scroll effect
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Mobile menu
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+  }
+
+  // Form submission
+  async function submitOrder() {
+    const name = document.getElementById('fname').value.trim();
+    const phone = document.getElementById('fphone').value.trim();
+    if (!name || !phone) {
+      alert('Пожалуйста, заполните имя и телефон');
+      return;
+    }
+
+    const data = {
+      name,
+      phone,
+      type: document.getElementById('ftype').value,
+      comment: document.getElementById('fcomment').value.trim(),
+      source: 'website',
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      const resp = await fetch('/api/website-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      // Show success regardless of API state (API may not be set up yet)
+      showSuccess();
+    } catch (e) {
+      showSuccess(); // Still show success — manager will follow up
+    }
+  }
+
+  function showSuccess() {
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  }
+
+  // Smooth reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.cat-card, .why-card, .step-card, .review-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>

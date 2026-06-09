@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#248bcf">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { -webkit-user-select: none; user-select: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 10px; margin: 0; font-size: 14px; }
+        .card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border-bottom: 1px solid #eee; padding: 12px 8px; text-align: left; }
+        th { color: #888; font-weight: 500; font-size: 12px; text-transform: uppercase; }
+        
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; outline: none; background: #fff; -webkit-user-select: text; user-select: text; }
+        input:disabled { background: #f9f9f9; color: #ccc; }
+        .btn-gray { background: #e0e0e0; color: #666; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .btn-gray.active { background: #248bcf; color: white; }
+        
+        .radio-group { display: flex; gap: 8px; }
+        .submit-btn { background: #248bcf; color: white; border: none; width: 100%; padding: 16px; font-size: 16px; font-weight: 600; border-radius: 10px; cursor: pointer; }
+        .label-cell { font-weight: 600; color: #333; width: 30%; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Деталь</th>
+                <th>Выбор</th>
+                <th>Значение (мм)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Длина -->
+            <tr>
+                <td class="label-cell">Длина</td>
+                <td><input type="text" id="raw_length" placeholder="3.7м / 370см" oninput="convertLength(this.value)"></td>
+                <td><input type="number" id="final_length" value="0" readonly></td>
+            </tr>
+            <!-- Высота -->
+            <tr>
+                <td class="label-cell">Высота</td>
+                <td><button id="height_btn" class="btn-gray" onclick="toggleHeight()">До потолка</button></td>
+                <td><input type="number" id="height_val" value="10"></td>
+            </tr>
+            <!-- Материал -->
+            <tr>
+                <td class="label-cell">Материал</td>
+                <td>
+                    <select id="material_val">
+                        <option value="ЛДСП">ЛДСП</option>
+                        <option value="МДФ">МДФ</option>
+                        <option value="Акрил">Акрил</option>
+                    </select>
+                </td>
+                <td>—</td>
+            </tr>
+            <!-- Цвет -->
+            <tr>
+                <td class="label-cell">Цвет</td>
+                <td><input type="text" id="color_input" placeholder="Не выбрано" oninput="toggleColor(this.value)"></td>
+                <td><input type="text" id="color_val" value="10" readonly></td>
+            </tr>
+
+            <!-- Техника -->
+            <tr>
+                <td class="label-cell">Мойка</td>
+                <td><div class="radio-group">
+                    <label><input type="radio" name="sink" value="no" checked onclick="setSinkNo()"> Нет</label>
+                    <label><input type="radio" name="sink" value="yes" onclick="setSink()"> Да</label>
+                </div></td>
+                <td><input type="number" id="sink_val" value=""></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Плита</td>
+                <td><div class="radio-group">
+                    <label><input type="radio" name="stove" value="no" checked onclick="setTech('stove', 600, true)"> Нет</label>
+                    <label><input type="radio" name="stove" value="yes" onclick="setTech('stove', 600, false)"> Да</label>
+                </div></td>
+                <td><input type="number" id="stove_val" value=""></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Вытяжка</td>
+                <td><div class="radio-group">
+                    <label><input type="radio" name="hood" value="no" checked onclick="setTech('hood', 600, true)"> Нет</label>
+                    <label><input type="radio" name="hood" value="yes" onclick="setTech('hood', 600, false)"> Да</label>
+                </div></td>
+                <td><input type="number" id="hood_val" value=""></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Духовка</td>
+                <td><div class="radio-group">
+                    <label><input type="radio" name="oven" value="no" checked onclick="setTech('oven', 600, true)"> Нет</label>
+                    <label><input type="radio" name="oven" value="yes" onclick="setTech('oven', 600, false)"> Да</label>
+                </div></td>
+                <td><input type="number" id="oven_val" value=""></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Посудомойка</td>
+                <td><div class="radio-group">
+                    <label><input type="radio" name="dishwasher" value="no" checked onclick="setTech('dishwasher', 600, true)"> Нет</label>
+                    <label><input type="radio" name="dishwasher" value="yes" onclick="setTech('dishwasher', 600, false)"> Да</label>
+                </div></td>
+                <td><input type="number" id="dishwasher_val" value=""></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Микроволновка</td>
+                <td><div class="radio-group">
+                    <label><input type="radio" name="microwave" value="no" checked onclick="setTech('microwave', 490, true)"> Нет</label>
+                    <label><input type="radio" name="microwave" value="yes" onclick="setTech('microwave', 490, false)"> Да</label>
+                </div></td>
+                <td><input type="number" id="microwave_val" value=""></td>
+            </tr>
+
+            <!-- Пенал -->
+            <tr>
+                <td class="label-cell">Пенал</td>
+                <td>
+                    <select id="penal_val">
+                        <option value="10">Не выбрано</option>
+                        <option value="11">Одиночный слева</option>
+                        <option value="12">Одиночный справа</option>
+                        <option value="21">Двойной справа</option>
+                        <option value="22">Двойной слева</option>
+                    </select>
+                </td>
+                <td>—</td>
+            </tr>
+            <!-- Холодильник -->
+            <tr>
+                <td class="label-cell">Холодильник</td>
+                <td>
+                    <div class="radio-group">
+                        <label><input type="radio" name="fridge" value="no" checked onclick="setFridge(false)"> Нет</label>
+                        <label><input type="radio" name="fridge" value="yes" onclick="setFridge(true)"> Да</label>
+                    </div>
+                </td>
+                <td><input type="number" id="fridge_val" value=""></td>
+            </tr>
+            <!-- Фурнитура -->
+            <tr>
+                <td class="label-cell">Фурнитура</td>
+                <td>
+                    <select id="hardware_val">
+                        <option value="Стандарт">Стандарт</option>
+                        <option value="Премиум">Премиум</option>
+                    </select>
+                </td>
+                <td>—</td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="submit-btn" onclick="submitForm()">ПОДТВЕРДИТЬ</button>
+</div>
+
+<!-- Окно загрузки фото стены -->
+<div id="wallPhotoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; padding: 20px; box-sizing: border-box; overflow-y: auto;">
+    <h2 style="margin-top: 0; color: #333;">Фото вашей стены</h2>
+    <p style="color: #666; line-height: 1.6;">Почти готово! Чтобы вы не просто представляли, а увидели результат, нам нужно фото вашей стены. Загрузите его сейчас, и мы устроим тест-драйв вашей будущей кухни: через несколько минут пришлем готовый эскиз, созданный специально под ваше пространство!</p>
+    <input type="file" id="wallPhotoInput" accept="image/*" style="width: 100%; padding: 12px; border: 2px dashed #248bcf; border-radius: 8px; cursor: pointer;">
+    <div id="wallPhotoPreview" style="margin-top: 15px; text-align: center;"></div>
+    <button onclick="skipWallPhoto()" style="width: 100%; padding: 12px; margin-top: 10px; background: #e0e0e0; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Пропустить</button>
+    <button onclick="uploadWallPhoto()" style="width: 100%; padding: 12px; margin-top: 10px; background: #248bcf; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Продолжить</button>
+</div>
+
+<!-- Окно загрузки фото референса -->
+<div id="refPhotoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; padding: 20px; box-sizing: border-box; overflow-y: auto;">
+    <h2 style="margin-top: 0; color: #333;">Фото желаемого стиля</h2>
+    <p style="color: #666; line-height: 1.6;">Помогите нам увидеть вашу будущую кухню вашими глазами! Пришлите фото-пример стиля, который вам по душе. Неважно, где вы его нашли — в интернете или в гостях — этот образ станет основой для создания идеальной кухни от Gani Mebel специально для вас.</p>
+    <input type="file" id="refPhotoInput" accept="image/*" style="width: 100%; padding: 12px; border: 2px dashed #248bcf; border-radius: 8px; cursor: pointer;">
+    <div id="refPhotoPreview" style="margin-top: 15px; text-align: center;"></div>
+    <button onclick="skipRefPhoto()" style="width: 100%; padding: 12px; margin-top: 10px; background: #e0e0e0; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Пропустить</button>
+    <button onclick="uploadRefPhoto()" style="width: 100%; padding: 12px; margin-top: 10px; background: #248bcf; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Завершить</button>
+</div>
+
+<!-- Финальное сообщение -->
+<div id="successModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; padding: 40px 20px; box-sizing: border-box; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+    <h2 style="color: #248bcf; font-size: 28px;">✓ Все данные у нас!</h2>
+    <p style="color: #666; font-size: 16px; line-height: 1.8; margin-bottom: 30px;">Наш дизайнер уже приступил к магии: мы соединяем ваши пожелания с параметрами пространства. Буквально через несколько минут вы получите реалистичное фото вашей будущей кухни от Gani Mebel. Приготовьтесь увидеть свою мечту в деталях! 🎨</p>
+    <button onclick="closeApp()" style="padding: 15px 40px; background: #248bcf; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">Закрыть</button>
+</div>
+
+<script>
+    let tg = window.Telegram.WebApp;
+    const apiBase = `${location.protocol}//${location.host}/api`;
+    let currentFormData = {};
+    let currentSessionId = null;
+    
+    // Инициализация Telegram WebApp
+    tg.expand();
+    tg.ready();
+    
+    window.addEventListener('load', loadFaqDefaults);
+
+    async function loadFaqDefaults() {
+        try {
+            const response = await fetch(`${apiBase}/faq-defaults`);
+            if (!response.ok) return;
+            const result = await response.json();
+            if (!result.success || !Array.isArray(result.items)) return;
+
+            const defaults = {};
+            result.items.forEach(item => {
+                const category = (item.category || '').toLowerCase();
+                const keywords = (item.keywords || '').toLowerCase();
+
+                if (category === 'фурнитура' || keywords.includes('фурнитура') || keywords.includes('бренды')) {
+                    defaults.hardware = 'Стандарт';
+                }
+                if (category === 'материалы' || keywords.includes('материал') || keywords.includes('акрил') || keywords.includes('мдф') || keywords.includes('лдсп')) {
+                    defaults.material = 'ЛДСП';
+                }
+                if (category === 'замер' || keywords.includes('замер')) {
+                    defaults.height = 2500;
+                }
+            });
+
+            if (defaults.material) {
+                document.getElementById('material_val').value = defaults.material;
+            }
+            if (defaults.hardware) {
+                document.getElementById('hardware_val').value = defaults.hardware;
+            }
+            // height default не трогаем — всегда 10
+        } catch (error) {
+            console.error('Ошибка загрузки FAQ-данных:', error);
+        }
+    }
+
+    function convertLength(val) {
+        let num = parseFloat(val.replace(',', '.'));
+        if (!num) { document.getElementById('final_length').value = 0; return; }
+        if (val.includes('м')) num *= 1000;
+        else if (val.includes('см')) num *= 10;
+        document.getElementById('final_length').value = Math.round(num);
+    }
+
+    function normalizeHeight(val) {
+        let num = parseFloat(String(val).replace(',', '.'));
+        if (!num || isNaN(num)) return 10;
+        if (num < 10) return Math.round(num * 1000);
+        if (num < 1000) return Math.round(num * 10);
+        return Math.round(num);
+    }
+
+    function toggleHeight() {
+        const btn = document.getElementById('height_btn');
+        const input = document.getElementById('height_val');
+        btn.classList.toggle('active');
+        if (btn.classList.contains('active')) {
+            input.disabled = true;
+            input.value = '';
+            input.placeholder = 'До потолка';
+        } else {
+            input.disabled = false;
+            input.value = '10';
+            input.placeholder = '';
+        }
+    }
+
+    function toggleColor(val) {
+        document.getElementById('color_val').value = val.trim() ? val : "10";
+    }
+
+    function setTech(id, val, isNo) {
+        document.getElementById(id + '_val').value = isNo ? '' : val;
+    }
+
+    function setSink() {
+        document.getElementById('sink_val').value = '600';
+    }
+
+    function setSinkNo() {
+        document.getElementById('sink_val').value = '';
+    }
+
+    function setFridge(active) {
+        document.getElementById('fridge_val').value = active ? 2000 : '';
+    }
+
+    function techVal(radioName, inputId, defaultVal) {
+        const yesRadio = document.querySelector(`input[name="${radioName}"][value="yes"]`);
+        const isYes = yesRadio && yesRadio.checked;
+        if (!isYes) return '10';
+        const val = document.getElementById(inputId).value.trim();
+        return val || String(defaultVal);
+    }
+
+    function getFormData() {
+        const heightBtn = document.getElementById('height_btn');
+        const heightCeiling = heightBtn.classList.contains('active');
+        const heightInput = document.getElementById('height_val');
+        return {
+            userId: tg.initDataUnsafe?.user?.id || 'unknown',
+            length: document.getElementById('raw_length').value || '0',
+            height: heightCeiling ? null : (heightInput.value || '10'),
+            height_ceiling: heightCeiling,
+            material: document.getElementById('material_val').value || '10',
+            color: document.getElementById('color_val').value || '10',
+            sink: techVal('sink', 'sink_val', 600),
+            stove: techVal('stove', 'stove_val', 600),
+            hood: techVal('hood', 'hood_val', 600),
+            oven: techVal('oven', 'oven_val', 600),
+            dishwasher: techVal('dishwasher', 'dishwasher_val', 600),
+            microwave: techVal('microwave', 'microwave_val', 490),
+            penal: document.getElementById('penal_val').value || '10',
+            fridge: techVal('fridge', 'fridge_val', 2000),
+            hardware: document.getElementById('hardware_val').value || '10',
+            timestamp: new Date().toISOString()
+        };
+    }
+
+    async function submitForm() {
+        try {
+            currentFormData = getFormData();
+            
+            // Отправляем основные данные на сервер
+            const response = await fetch(`${apiBase}/save-form`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(currentFormData)
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                currentSessionId = result.clientId;
+                
+                // Показываем окно загрузки фото стены
+                document.getElementById('wallPhotoModal').style.display = 'block';
+                document.querySelector('.card').style.display = 'none';
+            } else {
+                alert('Ошибка при сохранении данных. Попробуйте еще раз.');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            alert('Ошибка при отправке данных на сервер.');
+        }
+    }
+
+    function previewPhoto(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const file = input.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 300px; border-radius: 8px; margin: 10px 0;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    document.getElementById('wallPhotoInput').addEventListener('change', function() {
+        previewPhoto(this, 'wallPhotoPreview');
+    });
+
+    document.getElementById('refPhotoInput').addEventListener('change', function() {
+        previewPhoto(this, 'refPhotoPreview');
+    });
+
+    async function uploadWallPhoto() {
+        const file = document.getElementById('wallPhotoInput').files[0];
+        
+        if (!file) {
+            alert('Пожалуйста, выберите фото');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('clientId', currentSessionId);
+        formData.append('photo', file);
+        formData.append('type', 'wall');
+
+        try {
+            const response = await fetch(`${apiBase}/upload-photo`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                // Показываем окно загрузки фото референса
+                document.getElementById('wallPhotoModal').style.display = 'none';
+                document.getElementById('refPhotoModal').style.display = 'block';
+            } else {
+                alert('Ошибка при загрузке фото');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            alert('Ошибка при загрузке фото');
+        }
+    }
+
+    function skipWallPhoto() {
+        // Пропускаем загрузку фото стены и переходим к референсу
+        document.getElementById('wallPhotoModal').style.display = 'none';
+        document.getElementById('refPhotoModal').style.display = 'block';
+    }
+
+    async function uploadRefPhoto() {
+        const file = document.getElementById('refPhotoInput').files[0];
+        
+        if (!file) {
+            alert('Пожалуйста, выберите фото');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('clientId', currentSessionId);
+        formData.append('photo', file);
+        formData.append('type', 'reference');
+
+        try {
+            const response = await fetch(`${apiBase}/upload-photo`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                showSuccess();
+            } else {
+                alert('Ошибка при загрузке фото');
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+            alert('Ошибка при загрузке фото');
+        }
+    }
+
+    async function skipRefPhoto() {
+        try {
+            await fetch(`${apiBase}/complete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId: currentSessionId })
+            });
+        } catch(e) {}
+        showSuccess();
+    }
+
+    function showSuccess() {
+        document.getElementById('refPhotoModal').style.display = 'none';
+        document.getElementById('successModal').style.display = 'flex';
+    }
+
+    function closeApp() {
+        if (typeof tg !== 'undefined' && tg.close) {
+            tg.close();
+        }
+    }
+
+</script>
+</body>
+</html>

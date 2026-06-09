@@ -1,0 +1,27 @@
+# Секреты — не пушить
+form/.env
+ssh_helper.py
+.vscode/sftp.json
+
+# Логи
+*.log
+api_log.txt
+log_out.txt
+log2_out.txt
+bot.log
+api.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Временные файлы
+*.txt
+*.json
+!form/requirements.txt
+!form/submissions.json
+
+# IDE
+.vscode/
+.claude/
